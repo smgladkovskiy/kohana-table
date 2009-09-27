@@ -1,0 +1,5 @@
+Installation
+
+1. Copy the folders to your Kohana root directory
+2. If you're installing a module, add the module name to the paths at the bottom of your application/config.php file
+3. View any documentation at http://kohana.keyframesandcode.com/docs/table/
