@@ -652,6 +652,8 @@
 		 */
 		public function add_column($key, $insert_before = NULL)
 		{
+			// object creating
+				$obj = new stdClass();
 			// variables
 				$obj->key			= $key;
 				$obj->insert_before	= $insert_before;
