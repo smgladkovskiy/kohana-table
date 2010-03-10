@@ -124,12 +124,14 @@
 			// test for class as the first argument
 				if(is_string($arg1) && strstr($arg1, '=') === FALSE)
 				{
-					$class = 'Table_' . $arg1;
+					$class = $arg1 . '_Table';
 					if(class_exists($class))
 					{
 						return new $class($arg2, $arg3);
 					}
-					throw(new Kohana_User_Exception('Table instantiation error', "The class '$class' doesn't exist"));
+					throw new Kohana_Exception("The class '$class' doesn't exist",
+                                                array(':method' => __METHOD__, ':class' => __CLASS__));
+
 				}
 				
 			// if not, pass along data / attributes
