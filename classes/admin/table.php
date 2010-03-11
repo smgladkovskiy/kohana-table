@@ -10,6 +10,7 @@ class Admin_Table extends Table {
 	protected $_resource = '';
 	protected $_edit_col = FALSE;
 	protected $_del_col  = FALSE;
+	protected $_translate_titles = FALSE;	
 
 	protected $_edit_caption   = array('image' => '', 'title' => '');
 	protected $_delete_caption = array('image' => '', 'title' => '');
@@ -101,6 +102,23 @@ class Admin_Table extends Table {
 		return $this;
 	}
 
+	public function add_create_button($position = 'right')
+	{
+		$html = '<div style="text-align: '.$position.'">';
+		$html .= Html::anchor(
+							Route::get('admin')
+										->uri(array(
+												'controller' => $this->_resource,
+												'action' => $this->_crud['create']
+							 )),
+							$this->_add_caption['image'].$this->_add_caption['title'],
+							array('title' => $this->_add_caption['title'], 'class' => 'button')
+		);
+		$html .= '</div>';
+		$this->set_footer($html);
+		return $this;
+	}
+
 	public function set_resource($resource)
 	{
 		$this->_resource = $resource;
@@ -119,12 +137,19 @@ class Admin_Table extends Table {
 		return $this;
 	}
 
+	public function set_column_titles($titles, $translate = TRUE)
+	{
+		parent::set_column_titles($titles);
+		$this->_translate_titles = $translate;
+		return $this;
+	}
+
 	protected function _set_additional_data()
 	{
 		if (count($this->body_data))
 		{
 			foreach($this->body_data as $num => $row){
-				if ($this->_edit_col AND !empty($this->_crud['update']))
+				if ($this->_edit_col AND ! empty($this->_crud['update']))
 				{
 					$this->body_data[$num]['edit'] = Html::anchor(
 																Route::get('admin')
@@ -137,7 +162,10 @@ class Admin_Table extends Table {
 																array('title' => $this->_edit_caption['title'])
 					);														
 				}
-				if ($this->_del_col)
+				else {
+					$this->_edit_col = FALSE;
+				}
+				if ($this->_del_col AND ! empty($this->_crud['delete']))
 				{
 					$this->body_data[$num]['delete'] = Html::anchor(
 																Route::get('admin')
@@ -150,8 +178,30 @@ class Admin_Table extends Table {
 																array('title' => $this->_delete_caption['title'])
 					);
 				}
+				else {
+					$this->_del_col = FALSE;
+				}
 			}
-		}	
+		}
+
+		$num_cols = $this->get_num_cols();
+		for($i =0; $i < $num_cols; $i++)
+		{
+			if (!isset($this->column_attributes[$i]))
+			{
+				$this->column_attributes[$i] = array();
+			}	
+		}
+		
+		if ($this->_edit_col AND $this->_del_col)
+		{
+			$this->column_attributes[$num_cols - 2]['align'] = 'center';
+			$this->column_attributes[$num_cols - 1]['align'] = 'center';
+		}
+		elseif($this->_edit_col OR $this->_del_col)
+		{
+			$this->column_attributes[$num_cols - 1]['align'] = 'center';
+		}
 	}
 
 	protected function _set_caption($type, $caption, $image = '')
@@ -170,8 +220,15 @@ class Admin_Table extends Table {
 		if ($this->_edit_col OR $this->_del_col)
 		{
 			$this->_set_additional_data();
-		}
+		}	
 		
 		parent::_generate_body();
+
+		if ($this->_translate_titles)
+		{
+			foreach($this->column_titles as $key => $title){
+				$this->column_titles[$key] = __($title);
+			}
+		}
 	}
 } // End Class table
