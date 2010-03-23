@@ -120,7 +120,7 @@ class Table_Core {
 		// test for class as the first argument
 		if(is_string($arg1) && strstr($arg1, '=') === FALSE)
 		{
-			$class = 'Table_Type' . $arg1;
+			$class = 'Table_Type_' . $arg1;
 			if(class_exists($class))
 			{
 				return new $class($arg2, $arg3);
