@@ -5,7 +5,7 @@
  *
  * @author devolonter
  */
-class Admin_Table extends Table {
+class Table_Type_Admin extends Table {
 
 	protected $_resource = '';
 	protected $_edit_col = FALSE;
@@ -231,4 +231,4 @@ class Admin_Table extends Table {
 			}
 		}
 	}
-} // End Class table
+} // End Table_Type_Admin
